@@ -1,10 +1,12 @@
 [profile.default]
 src = 'contracts'
+script = 'scripts'
 out = 'out'
 libs = ['lib']
 test = 'test/foundry'
 cache = true
 
+evm_version = "london"
 optimizer = true
 optimizer_runs = 4294967295
 via_ir = true
