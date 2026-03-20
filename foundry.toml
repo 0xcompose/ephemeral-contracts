@@ -6,7 +6,7 @@ libs = ['lib']
 test = 'test/foundry'
 cache = true
 
-evm_version = "london"
+evm_version = "shanghai"
 optimizer = true
 optimizer_runs = 4294967295
 via_ir = true
