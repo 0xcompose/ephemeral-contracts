@@ -2,14 +2,14 @@
 pragma solidity ^0.8.0;
 
 import {Script} from "forge-std/Script.sol";
-import {UniswapV2Quoter} from "../contracts/UniswapV2Quoter.sol";
+import {UniswapV2QuoteSingle} from "../contracts/UniswapV2QuoteSingle.sol";
 import {console} from "forge-std/console.sol";
 
-contract QuoteUniV2 is Script {
+contract GetUniswapV2QuoteSingle is Script {
     function run() public returns (bytes memory) {
         vm.createSelectFork("https://rpc.fuse.io", 40905469);
 
-        console.logBytes(type(UniswapV2Quoter).creationCode);
+        console.logBytes(type(UniswapV2QuoteSingle).creationCode);
 
         uint256 amountIn = 0.1 ether;
 
@@ -22,7 +22,7 @@ contract QuoteUniV2 is Script {
 
         // 0 = raw pair quote; set to e.g. 300 (3%) if frontend shows amount after protocol/router fee
         uint256 protocolFeeBps = 0;
-        new UniswapV2Quoter(_factory, amountIn, path, protocolFeeBps);
+        // new UniswapV2QuoteSingle(_factory, amountIn, path, protocolFeeBps);
 
         // return abi.encodeWithSelector(UniswapV2Quoter.Amounts.selector, abi.encode(amounts));
     }

@@ -12,26 +12,29 @@ interface IUniswapV2Factory {
  * @dev Pair uses 0.3% fee (balance*1000 - amountIn*3). If the protocol's router/frontend
  *      applies an extra protocol fee (e.g. Voltage), set protocolFeeBps so the quote matches.
  */
-contract UniswapV2Quoter {
+contract UniswapV2QuoteSingle {
     error AmountOut(uint256 amountOut);
 
     /**
-     * @param _factory         Pair factory (e.g. Voltage).
+     * @param pool         Pair address.
      * @param amountIn         Input amount (path[0] token).
-     * @param path             [tokenIn, tokenOut].
+     * @param tokenIn          Input token address.
      * @param protocolFeeBps   Optional fee in basis points (e.g. 300 = 3%) deducted from amountOut
      *                         to match frontend "amount received" when router takes a cut. Use 0 for raw pair quote.
      */
-    constructor(address _factory, uint256 amountIn, address[] memory path, uint256 protocolFeeBps) {
-        address pair = IUniswapV2Factory(_factory).getPair(path[0], path[1]);
-        (uint256 reserve0, uint256 reserve1,) = IUniswapV2Pair(pair).getReserves();
+    constructor(address pool, address tokenIn, uint256 amountIn, uint256 protocolFeeBps) {
+        (uint256 reserve0, uint256 reserve1,) = IUniswapV2Pair(pool).getReserves();
 
-        (uint256 reserveIn, uint256 reserveOut) = path[0] < path[1] ? (reserve0, reserve1) : (reserve1, reserve0);
+        address token0 = IUniswapV2Pair(pool).token0();
+
+        (uint256 reserveIn, uint256 reserveOut) = tokenIn == token0 ? (reserve0, reserve1) : (reserve1, reserve0);
 
         uint256 amountOut = UniswapV2Library.getAmountOut(amountIn, reserveIn, reserveOut);
+
         if (protocolFeeBps > 0 && protocolFeeBps < 10_000) {
             amountOut = (amountOut * (10_000 - protocolFeeBps)) / 10_000;
         }
+
         revert AmountOut(amountOut);
     }
 }
